@@ -30,7 +30,6 @@ jobs:
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
           tags: |
-            type=semver,pattern={{version}}
             type=semver,pattern={{major}}.{{minor}}
       - name: Build and push
         uses: docker/build-push-action@v3
@@ -61,7 +60,6 @@ jobs:
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
           tags: |
-            type=semver,pattern={{version}}-aarch64
             type=semver,pattern={{major}}.{{minor}}-aarch64
       - name: Build and push
         uses: docker/build-push-action@v3
@@ -96,4 +94,4 @@ jobs:
             type=semver,pattern={{major}}.{{minor}}
       - name: Create & publish manifest
         run: |
-          docker buildx imagetools create --append ${{ steps.meta.outputs.tags }}-aarch64 --tag ${{ steps.meta.outputs.tags }}
+          docker buildx imagetools create --append ${{ steps.meta.outputs.tags[0] }}-aarch64 --tag ${{ steps.meta.outputs.tags[0] }}
