@@ -1,7 +1,6 @@
 name: pocketbase-release
 
 on:
-  push:
   release:
     types: [released]
   
