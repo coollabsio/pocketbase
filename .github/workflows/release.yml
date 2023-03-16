@@ -1,12 +1,12 @@
 name: pocketbase-release
 
 on:
-  push:
+  release:
+    types: [released]
   
 env:
   REGISTRY: ghcr.io
   IMAGE_NAME: "coollabsio/pocketbase"
-  VERSION: "0.12.3"
 
 jobs:
   amd64:
@@ -24,13 +24,21 @@ jobs:
           registry: ${{ env.REGISTRY }}
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN  }}
+      - name: Extract metadata (tags, labels)
+        id: meta
+        uses: docker/metadata-action@v4
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          tags: |
+            type=semver,pattern={{version}}
+            type=semver,pattern={{major}}.{{minor}}
       - name: Build and push
         uses: docker/build-push-action@v3
         with:
-          context: others/pocketbase/
+          context: .
           platforms: linux/amd64
           push: true
-          tags: ${{ env.IMAGE_NAME }}:${{ env.VERSION }}
+          tags: ${{ steps.meta.outputs.tags }}
   aarch64:
     runs-on: [self-hosted, arm64]
     steps:
@@ -46,13 +54,21 @@ jobs:
           registry: ${{ env.REGISTRY }}
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN  }}
-      - name: Build and push
-        uses: docker/build-push-action@v2
+      - name: Extract metadata (tags, labels)
+        id: meta
+        uses: docker/metadata-action@v4
         with:
-          context: others/pocketbase/
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          tags: |
+            type=semver,pattern={{version}}
+            type=semver,pattern={{major}}.{{minor}}
+      - name: Build and push
+        uses: docker/build-push-action@v3
+        with:
+          context: .
           platforms: linux/aarch64
           push: true
-          tags: ${{ env.IMAGE_NAME }}:${{ env.VERSION }}-aarch64
+          tags: ${{ steps.meta.outputs.tags }}-aarch64
   merge-manifest:
     runs-on: ubuntu-latest
     needs: [amd64, aarch64]
@@ -69,6 +85,14 @@ jobs:
           registry: ${{ env.REGISTRY }}
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN  }}
+      - name: Extract metadata (tags, labels)
+        id: meta
+        uses: docker/metadata-action@v4
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          tags: |
+            type=semver,pattern={{version}}
+            type=semver,pattern={{major}}.{{minor}}
       - name: Create & publish manifest
         run: |
-          docker buildx imagetools create --amend ${{ env.IMAGE_NAME }}:${{ env.VERSION }}-aarch64 --tag ${{ env.IMAGE_NAME }}:${{ env.VERSION }}
+          docker buildx imagetools create --append ${{ steps.meta.outputs.tags }}-aarch64 --tag ${{ steps.meta.outputs.tags }}
