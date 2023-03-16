@@ -1,6 +1,7 @@
 name: pocketbase-release
 
 on:
+  push:
   release:
     types: [released]
   
@@ -40,7 +41,8 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
   aarch64:
-    runs-on: [self-hosted, arm64]
+    runs-on: 
+      group: aarch-runners
     steps:
       - name: Checkout
         uses: actions/checkout@v3
