@@ -4,5 +4,6 @@ Unofficial [Pocketbase](https://pocketbase.io/) releases to AMD & ARM architectu
 
 
 ## Release process
-1. Change `PB_VERSION=0.12.3` inside [./Dockerfile](./Dockerfile#LL3C5-L3C22).
-2. Make a new Github Release.
+1. Propose an update in [https://github.com/coollabsio/pocketbase/issues](Issues).
+2. The changes will be applied `PB_VERSION=0.12.3` inside [./Dockerfile](./Dockerfile#LL3C5-L3C22).
+3. Wait & Enjoy 🎉.
