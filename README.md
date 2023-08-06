@@ -15,5 +15,5 @@
 
 ## <a name="release-process"></a>Release process
 1. Propose an update in [Issues](https://github.com/coollabsio/pocketbase/issues).
-2. Then changes will be applied `PB_VERSION=0.17.1` inside [Dockerfile](./Dockerfile#LL3C5-L3C22).
+2. Then changes will be applied `PB_VERSION=0.17.2` inside [Dockerfile](./Dockerfile#LL3C5-L3C22).
 3. Wait & Enjoy 🎉.
