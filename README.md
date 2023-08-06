@@ -1,4 +1,4 @@
-# PocketBase at Coolify
+# PocketBase at Coolify 0.17.2
 > Unofficial [Pocketbase](https://pocketbase.io/) releases to AMD & ARM architectures.
 
 <p align="center">
