@@ -1,4 +1,4 @@
-# PocketBase at Coolify 0.18.6
+# PocketBase at Coolify 0.18.8
 > Unofficial [Pocketbase](https://pocketbase.io/) releases to AMD & ARM architectures.
 
 <p align="center">
@@ -15,6 +15,6 @@
 
 ## <a name="release-process"></a>Release process
 1. Propose an update in [Issues](https://github.com/coollabsio/pocketbase/issues).
-2. Then changes will be applied `PB_VERSION=0.18.6` inside [Dockerfile](./Dockerfile#LL3C5-L3C22).
+2. Then changes will be applied `PB_VERSION=0.18.8` inside [Dockerfile](./Dockerfile#LL3C5-L3C22).
 3. Create a new Release with the exact version number.
 4. Wait & Enjoy 🎉.
