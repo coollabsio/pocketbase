@@ -1,5 +1,5 @@
 # PocketBase at Coolify 0.18.9
-> Coolify x [Pocketbase](https://pocketbase.io/) releases to AMD & ARM architectures.
+> [Coolify](https://github.com/coollabsio/coolify) x [Pocketbase](https://pocketbase.io/) releases to AMD & ARM architectures.
 
 <p align="center">
     <a href="https://pocketbase.io" target="_blank" rel="noopener">
