@@ -1,6 +1,6 @@
 FROM alpine:3.17
 ARG BUILDARCH
-ARG PB_VERSION=0.19.0
+ARG PB_VERSION=0.19.1
 RUN apk add --no-cache \
     unzip \
     ca-certificates
