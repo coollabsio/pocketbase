@@ -1,6 +1,7 @@
 # PocketBase at Coolify 0.19.4
 > [Coolify](https://github.com/coollabsio/coolify) x [Pocketbase](https://pocketbase.io/) releases to AMD & ARM architectures.
 
+Want to easily host Pocketbase on your own server? Use [Coolify](https://coolify.io)! 🚀
 <p align="center">
     <a href="https://pocketbase.io" target="_blank" rel="noopener">
         <img src="https://i.imgur.com/5qimnm5.png" alt="PocketBase - open source backend in 1 file" />
