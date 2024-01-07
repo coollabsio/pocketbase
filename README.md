@@ -1,4 +1,4 @@
-# PocketBase at Coolify 0.20.0
+# PocketBase at Coolify 0.20.5
 > [Coolify](https://github.com/coollabsio/coolify) x [Pocketbase](https://pocketbase.io/) releases to AMD & ARM architectures.
 
 Want to easily host Pocketbase on your own server? Use [Coolify](https://coolify.io)! 🚀
