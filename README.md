@@ -16,6 +16,6 @@ Want to easily host Pocketbase on your own server? Use [Coolify](https://coolify
 
 ## <a name="release-process"></a>Release process
 1. Propose an update in [Issues](https://github.com/coollabsio/pocketbase/issues).
-2. Then changes will be applied `PB_VERSION=0.19.4` inside [Dockerfile](./Dockerfile#LL3C5-L3C22).
+2. Then changes will be applied `PB_VERSION=0.20.7` inside [Dockerfile](./Dockerfile#LL3C5-L3C22).
 3. Create a new Release with the exact version number.
 4. Wait & Enjoy 🎉.
