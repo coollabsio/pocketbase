@@ -1,4 +1,4 @@
-# PocketBase at Coolify 0.21.1
+# PocketBase at Coolify 0.21.2
 > [Coolify](https://github.com/coollabsio/coolify) x [Pocketbase](https://pocketbase.io/) releases to AMD & ARM architectures.
 
 Want to easily host Pocketbase on your own server? Use [Coolify](https://coolify.io)! 🚀
@@ -16,6 +16,6 @@ Want to easily host Pocketbase on your own server? Use [Coolify](https://coolify
 
 ## <a name="release-process"></a>Release process
 1. Propose an update in [Issues](https://github.com/coollabsio/pocketbase/issues).
-2. Then changes will be applied `PB_VERSION=0.21.1` inside [Dockerfile](./Dockerfile#LL3C5-L3C22).
+2. Then changes will be applied `PB_VERSION=0.21.2` inside [Dockerfile](./Dockerfile#LL3C5-L3C22).
 3. Create a new Release with the exact version number.
 4. Wait & Enjoy 🎉.
