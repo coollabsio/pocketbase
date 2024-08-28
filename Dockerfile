@@ -14,4 +14,5 @@ RUN rm /tmp/pb.zip
 
 EXPOSE 8080
 
-ENTRYPOINT ["/app/pocketbase", "serve", "--http=0.0.0.0:8080"]
+ENV ORIGINS=""  # Default to allow all origins if no value is provided
+ENTRYPOINT ["/app/pocketbase", "serve", "--http=0.0.0.0:8080", "--origins=${ORIGINS}"]
