@@ -3,7 +3,7 @@ name: pocketbase-release
 on:
   release:
     types: [released]
-  
+
 env:
   REGISTRY: ghcr.io
   IMAGE_NAME: "coollabsio/pocketbase"
@@ -39,7 +39,7 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
   aarch64:
-    runs-on: 
+    runs-on:
       group: aarch-runners
     steps:
       - name: Checkout
