@@ -1,10 +1,11 @@
-# PocketBase at Coolify 0.25.8
+# PocketBase at Coolify
+
 > [Coolify](https://github.com/coollabsio/coolify) x [Pocketbase](https://pocketbase.io/) releases to AMD & ARM architectures.
 
-Want to easily host Pocketbase on your own server? Use [Coolify](https://coolify.io)! 🚀
+Full open source with backups for your database at your server [Coolify](https://coolify.io)! 🚀
 <p align="center">
     <a href="https://pocketbase.io" target="_blank" rel="noopener">
-        <img src="https://i.imgur.com/5qimnm5.png" alt="PocketBase - open source backend in 1 file" />
+        <img src="./public/header.jpg" alt="PocketBase - open source backend in 1 file" />
     </a>
 </p>
 
@@ -14,8 +15,27 @@ Want to easily host Pocketbase on your own server? Use [Coolify](https://coolify
     <a href="https://pkg.go.dev/github.com/pocketbase/pocketbase" target="_blank" rel="noopener"><img src="https://godoc.org/github.com/ganigeorgiev/fexpr?status.svg" alt="Go package documentation" /></a>
 </p>
 
-## <a name="release-process"></a>Release process
-1. Propose an update in [Issues](https://github.com/coollabsio/pocketbase/issues).
-2. Then changes will be applied `PB_VERSION=0.25.8` inside [Dockerfile](./Dockerfile#LL3C5-L3C22).
-3. Create a new Release with the exact version number.
-4. Wait & Enjoy 🎉.
+<div class="collab" style="display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; text-align: center;">
+    <h2 style="width: 100%;">Be a contributor</h2>
+        <div class="points" style="display: flex; flex-wrap: wrap; gap: 10px; text-align: left;">
+
+1) Propose an update in [Issues](https://github.com/coollabsio/pocketbase/issues).
+2) Changes will be applied `PB_VERSION=0.25.9` inside [Dockerfile](./Dockerfile#LL3C5-L3C22).
+3) Create a new Release with the exact version number.
+4) Wait & Enjoy 🎉.
+        </div>
+</div>
+
+<div class="contributors" style="display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; text-align: center;">
+    <h2 style="width: 100%;">Contributors <span>(10)</span></h2>
+    <a href="https://github.com/orenaksakal" target="_blank"><img src="https://avatars.githubusercontent.com/u/199699?s=64&amp;v=4" alt="@orenaksakal" width="64" height="64" style="border-radius: 50%; box-shadow: 2px 2px 5px rgba(0,0,0,0.2);"></a>
+    <a href="https://github.com/miguelgargallo" target="_blank"><img src="https://avatars.githubusercontent.com/u/5947268?s=64&amp;v=4" alt="@miguelgargallo" width="64" height="64" style="border-radius: 50%; box-shadow: 2px 2px 5px rgba(0,0,0,0.2);"></a>
+    <a href="https://github.com/andrasbacsai" target="_blank"><img src="https://avatars.githubusercontent.com/u/5845193?s=64&amp;v=4" alt="@andrasbacsai" width="64" height="64" style="border-radius: 50%; box-shadow: 2px 2px 5px rgba(0,0,0,0.2);"></a>
+    <a href="https://github.com/deenlabs" target="_blank"><img src="https://avatars.githubusercontent.com/u/183146379?s=64&amp;v=4" alt="@deenlabs" width="64" height="64" style="border-radius: 50%; box-shadow: 2px 2px 5px rgba(0,0,0,0.2);"></a>
+    <a href="https://github.com/vigneshksaithal" target="_blank"><img src="https://avatars.githubusercontent.com/u/60360863?s=64&amp;v=4" alt="@vigneshksaithal" width="64" height="64" style="border-radius: 50%; box-shadow: 2px 2px 5px rgba(0,0,0,0.2);"></a>
+    <a href="https://github.com/Allstreamer" target="_blank"><img src="https://avatars.githubusercontent.com/u/48365544?s=64&amp;v=4" alt="@Allstreamer" width="64" height="64" style="border-radius: 50%; box-shadow: 2px 2px 5px rgba(0,0,0,0.2);"></a>
+    <a href="https://github.com/fcastrovilli" target="_blank"><img src="https://avatars.githubusercontent.com/u/27171200?s=64&amp;v=4" alt="@fcastrovilli" width="64" height="64" style="border-radius: 50%; box-shadow: 2px 2px 5px rgba(0,0,0,0.2);"></a>
+    <a href="https://github.com/janbiasi" target="_blank"><img src="https://avatars.githubusercontent.com/u/4563751?s=64&amp;v=4" alt="@janbiasi" width="64" height="64" style="border-radius: 50%; box-shadow: 2px 2px 5px rgba(0,0,0,0.2);"></a>
+    <a href="https://github.com/mtkgeek" target="_blank"><img src="https://avatars.githubusercontent.com/u/28762536?s=64&amp;v=4" alt="@mtkgeek" width="64" height="64" style="border-radius: 50%; box-shadow: 2px 2px 5px rgba(0,0,0,0.2);"></a>
+    <a href="https://github.com/nyzss" target="_blank"><img src="https://avatars.githubusercontent.com/u/81782738?s=64&amp;v=4" alt="@nyzss" width="64" height="64" style="border-radius: 50%; box-shadow: 2px 2px 5px rgba(0,0,0,0.2);"></a>
+</div>
