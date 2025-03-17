@@ -2,7 +2,7 @@
 
 > [Coolify](https://github.com/coollabsio/coolify) x [Pocketbase](https://pocketbase.io/) releases to AMD & ARM architectures.
 
-Full open source with buckups database at your server [Coolify](https://coolify.io)! 🚀
+Full open source with backups for your database at your server [Coolify](https://coolify.io)! 🚀
 <p align="center">
     <a href="https://pocketbase.io" target="_blank" rel="noopener">
         <img src="./public/header.jpg" alt="PocketBase - open source backend in 1 file" />
