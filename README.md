@@ -21,7 +21,7 @@ Full open source with backups for your database at your server [Coolify](https:/
         <div class="points" style="display: flex; flex-wrap: wrap; gap: 10px; text-align: left;">
 
 1) Propose an update in [Issues](https://github.com/coollabsio/pocketbase/issues).
-2) Changes will be applied `PB_VERSION=0.26.6` inside [Dockerfile](./Dockerfile#LL3C5-L3C22).
+2) Changes will be applied `PB_VERSION=` inside [Dockerfile](./Dockerfile#LL3C5-L3C22).
 3) Create a new Release with the exact version number.
 4) Wait & Enjoy 🎉.
         </div>
