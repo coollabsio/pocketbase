@@ -5,7 +5,9 @@ ARG PB_VERSION=0.28.1
 
 RUN apk add --no-cache \
   unzip \
-  ca-certificates
+  ca-certificates \
+  curl \
+  wget
 
 ADD https://github.com/pocketbase/pocketbase/releases/download/v${PB_VERSION}/pocketbase_${PB_VERSION}_linux_${BUILDARCH}.zip /tmp/pb.zip
 
