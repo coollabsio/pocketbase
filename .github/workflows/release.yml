@@ -6,7 +6,7 @@ on:
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: "frankdierolf/pocketbase"
+  IMAGE_NAME: "coollabsio/pocketbase"
 
 jobs:
   amd64:
