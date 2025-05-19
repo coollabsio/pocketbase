@@ -16,4 +16,8 @@ RUN rm /tmp/pb.zip
 
 EXPOSE 8080
 
+# Add healthcheck
+HEALTHCHECK --interval=30s --timeout=5s --start-period=5s --retries=3 \
+  CMD curl --fail http://localhost:8080/api/health || exit 1
+
 ENTRYPOINT ["/app/pocketbase", "serve", "--http=0.0.0.0:8080"]
