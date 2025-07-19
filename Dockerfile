@@ -1,7 +1,7 @@
 FROM alpine:latest
 
 ARG BUILDARCH
-ARG PB_VERSION=0.28.4
+ARG PB_VERSION=0.29.0
 
 RUN apk add --no-cache \
   unzip \
