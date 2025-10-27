@@ -18,6 +18,8 @@ Full open source with backups for your database at your server [Coolify](https:/
 
 Since v0.31.0 the release process is automated. It runs every day at midnight.
 
+Thank you everyone who managed the releases before that. 💜
+
 <div class="contributors" style="display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; text-align: center;">
     <h2 style="width: 100%;">Contributors <span>(10)</span></h2>
     <a href="https://github.com/orenaksakal" target="_blank"><img src="https://avatars.githubusercontent.com/u/199699?s=64&amp;v=4" alt="@orenaksakal" width="64" height="64" style="border-radius: 50%; box-shadow: 2px 2px 5px rgba(0,0,0,0.2);"></a>
