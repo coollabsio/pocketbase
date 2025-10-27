@@ -1,111 +1,102 @@
-name: Auto Update PocketBase
+name: Build PocketBase Docker Images
 
 on:
   schedule:
-    # Run daily at 00:00 UTC
+    # Run daily at 00:00 UTC to check for new releases
     - cron: '0 0 * * *'
-  workflow_dispatch: # Allow manual trigger
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'PocketBase version to build (e.g., 0.31.0). Leave empty to build latest.'
+        required: false
+        type: string
+      force_rebuild:
+        description: 'Force rebuild even if image already exists'
+        required: false
+        type: boolean
+        default: false
+      skip_latest_tag:
+        description: 'Skip tagging as latest (useful for building older versions)'
+        required: false
+        type: boolean
+        default: false
 
 env:
-  REGISTRY: ghcr.io
-  IMAGE_NAME: "coollabsio/pocketbase"
+  GITHUB_REGISTRY: ghcr.io
+  DOCKER_REGISTRY: docker.io
+  IMAGE_NAME: coollabsio/pocketbase
 
 jobs:
-  check-version:
+  check-release:
     runs-on: ubuntu-latest
     outputs:
-      new_version: ${{ steps.check.outputs.new_version }}
-      has_update: ${{ steps.check.outputs.has_update }}
+      version: ${{ steps.pocketbase-release.outputs.version }}
+      should_build: ${{ steps.check-image.outputs.exists == 'false' }}
     steps:
-      - name: Checkout
-        uses: actions/checkout@v5
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Check for new PocketBase release
-        id: check
+      - name: Get latest PocketBase release
+        id: pocketbase-release
         run: |
-          # Get latest PocketBase release version
-          LATEST_VERSION=$(curl -s https://api.github.com/repos/pocketbase/pocketbase/releases/latest | jq -r '.tag_name' | sed 's/^v//')
-          echo "Latest PocketBase version: $LATEST_VERSION"
-          
-          # Get current version from Dockerfile
-          CURRENT_VERSION=$(grep 'ARG PB_VERSION=' Dockerfile | cut -d'=' -f2)
-          echo "Current version in Dockerfile: $CURRENT_VERSION"
-          
-          # Compare versions
-          if [ "$LATEST_VERSION" != "$CURRENT_VERSION" ]; then
-            echo "New version available: $LATEST_VERSION"
-            echo "new_version=$LATEST_VERSION" >> $GITHUB_OUTPUT
-            echo "has_update=true" >> $GITHUB_OUTPUT
+          if [ -n "${{ github.event.inputs.version }}" ]; then
+            VERSION="${{ github.event.inputs.version }}"
+            echo "Using manually specified version: $VERSION"
           else
-            echo "Already up to date"
-            echo "has_update=false" >> $GITHUB_OUTPUT
+            # Fetch the latest release from PocketBase GitHub
+            LATEST_RELEASE=$(curl -s https://api.github.com/repos/pocketbase/pocketbase/releases/latest | jq -r '.tag_name')
+            # Remove 'v' prefix if present
+            VERSION=$(echo "$LATEST_RELEASE" | sed 's/^v//')
+            echo "Latest PocketBase release: $VERSION"
           fi
 
-  update-and-build:
-    needs: check-version
-    if: needs.check-version.outputs.has_update == 'true'
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v5
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
 
-      - name: Update Dockerfile
+      - name: Check if image already exists
+        id: check-image
         run: |
-          NEW_VERSION="${{ needs.check-version.outputs.new_version }}"
-          sed -i "s/ARG PB_VERSION=.*/ARG PB_VERSION=$NEW_VERSION/" Dockerfile
-          
-      - name: Commit and push changes
-        run: |
-          git config --local user.email "github-actions[bot]@users.noreply.github.com"
-          git config --local user.name "github-actions[bot]"
-          git add Dockerfile
-          git commit -m "chore: update PocketBase to v${{ needs.check-version.outputs.new_version }}"
-          git tag "v${{ needs.check-version.outputs.new_version }}"
-          git push origin main
-          git push origin "v${{ needs.check-version.outputs.new_version }}"
+          VERSION="${{ steps.pocketbase-release.outputs.version }}"
+          GHCR_IMAGE="${{ env.GITHUB_REGISTRY }}/${{ env.IMAGE_NAME }}"
+          FORCE_REBUILD="${{ github.event.inputs.force_rebuild }}"
 
-      - name: Create GitHub Release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          tag_name: v${{ needs.check-version.outputs.new_version }}
-          release_name: Release v${{ needs.check-version.outputs.new_version }}
-          body: |
-            Auto-updated to PocketBase v${{ needs.check-version.outputs.new_version }}
-            
-            See upstream changes: https://github.com/pocketbase/pocketbase/releases/tag/v${{ needs.check-version.outputs.new_version }}
-          draft: false
-          prerelease: false
+          # If force_rebuild is true, always rebuild
+          if [ "$FORCE_REBUILD" = "true" ]; then
+            echo "Force rebuild enabled, skipping existence check"
+            echo "exists=false" >> $GITHUB_OUTPUT
+          # Try to pull the image to see if it exists
+          elif docker manifest inspect "${GHCR_IMAGE}:${VERSION}" > /dev/null 2>&1; then
+            echo "Image ${GHCR_IMAGE}:${VERSION} already exists"
+            echo "exists=true" >> $GITHUB_OUTPUT
+          else
+            echo "Image ${GHCR_IMAGE}:${VERSION} does not exist, will build"
+            echo "exists=false" >> $GITHUB_OUTPUT
+          fi
 
-  build-amd64:
-    needs: [check-version, update-and-build]
-    if: needs.check-version.outputs.has_update == 'true'
+  amd64:
     runs-on: ubuntu-latest
+    needs: check-release
+    if: needs.check-release.outputs.should_build == 'true'
+    permissions:
+      contents: read
+      packages: write
     steps:
-      - name: Checkout
-        uses: actions/checkout@v5
-        with:
-          ref: v${{ needs.check-version.outputs.new_version }}
-
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v3
+      - uses: actions/checkout@v4
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
-      - name: Login to ghcr.io
+      - name: Login to ${{ env.GITHUB_REGISTRY }}
         uses: docker/login-action@v3
         with:
-          registry: ${{ env.REGISTRY }}
+          registry: ${{ env.GITHUB_REGISTRY }}
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Build and push AMD64
+      - name: Login to ${{ env.DOCKER_REGISTRY }}
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.DOCKER_REGISTRY }}
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build and Push Image (amd64)
         uses: docker/build-push-action@v6
         with:
           context: .
@@ -113,36 +104,41 @@ jobs:
           push: true
           build-args: |
             BUILDARCH=amd64
-            PB_VERSION=${{ needs.check-version.outputs.new_version }}
+            PB_VERSION=${{ needs.check-release.outputs.version }}
           tags: |
-            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ needs.check-version.outputs.new_version }}
-            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
+            ${{ env.DOCKER_REGISTRY }}/${{ env.IMAGE_NAME }}:${{ needs.check-release.outputs.version }}-amd64
+            ${{ env.GITHUB_REGISTRY }}/${{ env.IMAGE_NAME }}:${{ needs.check-release.outputs.version }}-amd64
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
 
-  build-aarch64:
-    needs: [check-version, update-and-build]
-    if: needs.check-version.outputs.has_update == 'true'
-    runs-on:
-      group: aarch-runners
+  aarch64:
+    runs-on: [ self-hosted, arm64 ]
+    needs: check-release
+    if: needs.check-release.outputs.should_build == 'true'
+    permissions:
+      contents: read
+      packages: write
     steps:
-      - name: Checkout
-        uses: actions/checkout@v5
-        with:
-          ref: v${{ needs.check-version.outputs.new_version }}
-
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v3
+      - uses: actions/checkout@v4
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
-      - name: Login to ghcr.io
+      - name: Login to ${{ env.GITHUB_REGISTRY }}
         uses: docker/login-action@v3
         with:
-          registry: ${{ env.REGISTRY }}
+          registry: ${{ env.GITHUB_REGISTRY }}
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Build and push ARM64
+      - name: Login to ${{ env.DOCKER_REGISTRY }}
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.DOCKER_REGISTRY }}
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build and Push Image (aarch64)
         uses: docker/build-push-action@v6
         with:
           context: .
@@ -150,38 +146,74 @@ jobs:
           push: true
           build-args: |
             BUILDARCH=arm64
-            PB_VERSION=${{ needs.check-version.outputs.new_version }}
+            PB_VERSION=${{ needs.check-release.outputs.version }}
           tags: |
-            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ needs.check-version.outputs.new_version }}-aarch64
-            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest-aarch64
+            ${{ env.DOCKER_REGISTRY }}/${{ env.IMAGE_NAME }}:${{ needs.check-release.outputs.version }}-arm64
+            ${{ env.GITHUB_REGISTRY }}/${{ env.IMAGE_NAME }}:${{ needs.check-release.outputs.version }}-arm64
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
 
   merge-manifest:
-    needs: [check-version, build-amd64, build-aarch64]
-    if: needs.check-version.outputs.has_update == 'true'
     runs-on: ubuntu-latest
+    needs: [ check-release, amd64, aarch64 ]
+    if: needs.check-release.outputs.should_build == 'true'
+    permissions:
+      contents: read
+      packages: write
     steps:
-      - name: Checkout
-        uses: actions/checkout@v5
+      - uses: actions/checkout@v4
 
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v3
+      - uses: docker/setup-buildx-action@v3
 
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
-
-      - name: Login to ghcr.io
+      - name: Login to ${{ env.GITHUB_REGISTRY }}
         uses: docker/login-action@v3
         with:
-          registry: ${{ env.REGISTRY }}
+          registry: ${{ env.GITHUB_REGISTRY }}
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Create & publish manifest
+      - name: Login to ${{ env.DOCKER_REGISTRY }}
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.DOCKER_REGISTRY }}
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Create & publish manifest on ${{ env.GITHUB_REGISTRY }}
         run: |
-          VERSION="${{ needs.check-version.outputs.new_version }}"
-          docker buildx imagetools create --append \
-            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${VERSION}-aarch64 \
-            --tag ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${VERSION}
-          docker buildx imagetools create --append \
-            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest-aarch64 \
-            --tag ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
+          TAGS="-t ${{ env.GITHUB_REGISTRY }}/${{ env.IMAGE_NAME }}:${{ needs.check-release.outputs.version }}"
+
+          # Only add latest tag if skip_latest_tag is false
+          if [ "${{ github.event.inputs.skip_latest_tag }}" != "true" ]; then
+            TAGS="$TAGS -t ${{ env.GITHUB_REGISTRY }}/${{ env.IMAGE_NAME }}:latest"
+          fi
+
+          docker buildx imagetools create \
+          $TAGS \
+          ${{ env.GITHUB_REGISTRY }}/${{ env.IMAGE_NAME }}:${{ needs.check-release.outputs.version }}-amd64 \
+          ${{ env.GITHUB_REGISTRY }}/${{ env.IMAGE_NAME }}:${{ needs.check-release.outputs.version }}-arm64
+
+      - name: Create & publish manifest on ${{ env.DOCKER_REGISTRY }}
+        run: |
+          TAGS="-t ${{ env.DOCKER_REGISTRY }}/${{ env.IMAGE_NAME }}:${{ needs.check-release.outputs.version }}"
+
+          # Only add latest tag if skip_latest_tag is false
+          if [ "${{ github.event.inputs.skip_latest_tag }}" != "true" ]; then
+            TAGS="$TAGS -t ${{ env.DOCKER_REGISTRY }}/${{ env.IMAGE_NAME }}:latest"
+          fi
+
+          docker buildx imagetools create \
+          $TAGS \
+          ${{ env.DOCKER_REGISTRY }}/${{ env.IMAGE_NAME }}:${{ needs.check-release.outputs.version }}-amd64 \
+          ${{ env.DOCKER_REGISTRY }}/${{ env.IMAGE_NAME }}:${{ needs.check-release.outputs.version }}-arm64
+
+      - name: Summary
+        run: |
+          echo "✅ Successfully built and published PocketBase ${{ needs.check-release.outputs.version }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Images published:" >> $GITHUB_STEP_SUMMARY
+          echo "- GHCR: ${{ env.GITHUB_REGISTRY }}/${{ env.IMAGE_NAME }}:${{ needs.check-release.outputs.version }}" >> $GITHUB_STEP_SUMMARY
+          echo "- Docker Hub: ${{ env.DOCKER_REGISTRY }}/${{ env.IMAGE_NAME }}:${{ needs.check-release.outputs.version }}" >> $GITHUB_STEP_SUMMARY
+          if [ "${{ github.event.inputs.skip_latest_tag }}" != "true" ]; then
+            echo "- Latest: ${{ env.DOCKER_REGISTRY }}/${{ env.IMAGE_NAME }}:latest" >> $GITHUB_STEP_SUMMARY
+          fi
