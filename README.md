@@ -16,17 +16,6 @@ Full open source with backups for your database at your server [Coolify](https:/
     <a href="https://pkg.go.dev/github.com/pocketbase/pocketbase" target="_blank" rel="noopener"><img src="https://godoc.org/github.com/ganigeorgiev/fexpr?status.svg" alt="Go package documentation" /></a>
 </p>
 
-<div class="collab" style="display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; text-align: center;">
-    <h2 style="width: 100%;">Be a contributor</h2>
-        <div class="points" style="display: flex; flex-wrap: wrap; gap: 10px; text-align: left;">
-
-1) Propose an update in [Issues](https://github.com/coollabsio/pocketbase/issues).
-2) Changes will be applied `PB_VERSION=` inside [Dockerfile](./Dockerfile#LL3C5-L3C22).
-3) Create a new Release with the exact version number.
-4) Wait & Enjoy 🎉.
-        </div>
-</div>
-
 <div class="contributors" style="display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; text-align: center;">
     <h2 style="width: 100%;">Contributors <span>(10)</span></h2>
     <a href="https://github.com/orenaksakal" target="_blank"><img src="https://avatars.githubusercontent.com/u/199699?s=64&amp;v=4" alt="@orenaksakal" width="64" height="64" style="border-radius: 50%; box-shadow: 2px 2px 5px rgba(0,0,0,0.2);"></a>
